@@ -1,8 +1,10 @@
 package Chess.Core;
 
 import java.io.File;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -22,23 +24,29 @@ import Chess.Core.Util.ChessSquare;
 import Chess.Core.Util.Color;
 import Chess.Core.Util.IO.ChessIO;
 import Chess.Core.Util.IO.DataHelper;
+import Chess.Core.Util.IO.json.ChessLoader;
 import javafx.scene.layout.GridPane;
 
 public class ChessBoard extends GridPane {
     private ChessSquare[] squares = new ChessSquare[64];
     private Map<Color, Set<ChessSquare>> attackedSquares = new HashMap<>();
+
     private int currentTurn = 1;
     private int ruleOf50 = 0;
+
     private Map<String, ChessIO> io = new LinkedHashMap<>();
     private Color aiColor = Color.BLACK; // null = no AI; set via a menu later
     private Difficulty difficulty = Difficulty.MEDIUM; // engine thinking-time budget
+
     private boolean aiThinking = false;
     private boolean gameOver = false;
-    private final java.util.List<Long> positionKeys = new java.util.ArrayList<>();
+    private boolean inCheck = false;
+
+    private final List<Long> positionKeys = new ArrayList<>();
     private int lastMoveFrom = -1;
     private int lastMoveTo = -1;
-    private final java.util.Deque<BoardSnapshot> history = new java.util.ArrayDeque<>();
-    private final Chess.Core.Util.IO.json.ChessLoader snapshotIO = new Chess.Core.Util.IO.json.ChessLoader();
+    private final Deque<BoardSnapshot> history = new ArrayDeque<>();
+    private final Chess.Core.Util.IO.json.ChessLoader snapshotIO = new ChessLoader();
 
     /**
      * Everything needed to rewind one position: board JSON, repetition-key count,
@@ -210,7 +218,7 @@ public class ChessBoard extends GridPane {
                 if (move != null) {
                     EngineBridge.applyMove(this, move);
                     
-                    if (!gameOver) {
+                    if (!gameOver || !inCheck) {
                         ChessGame.displayStatusText("AI move: " + move);
                     }
                 }
@@ -235,6 +243,7 @@ public class ChessBoard extends GridPane {
                     return;
                 } else {
                     ChessGame.displayStatusText("Check! " + king.getColor().getFancyName() + " has to defend.");
+                    inCheck = true;
                     return;
                 }
             } else if (king.isStaleMate()) {
@@ -247,10 +256,12 @@ public class ChessBoard extends GridPane {
         if (!positionKeys.isEmpty()) {
             long cur = positionKeys.get(positionKeys.size() - 1);
             int count = 0;
+
             for (long k : positionKeys) {
                 if (k == cur)
                     count++;
             }
+            
             if (count >= 3) {
                 ChessGame.displayStatusText("Draw by threefold repetition.");
                 gameOver = true;
