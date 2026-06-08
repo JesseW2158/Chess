@@ -1,0 +1,16 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "javaExec": "C:\\Users\\wangj\\AppData\\Local\\Programs\\Eclipse Adoptium\\jdk-21.0.8.9-hotspot\\bin\\java.exe",
+            "vmArgs": "--module-path \"C:\\Users\\wangj\\Downloads\\javafx-21\\lib\" --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web",
+            "mainClass": "Chess.ChessGame"
+        }
+    ]
+}

@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+}
+
+group 'Chess'
+version '1.0'
+
+java {
+    // Gradle auto-detects a matching JDK on each machine, so we don't hardcode an
+    // absolute JDK path (that only works on one person's computer).
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+javafx {
+    version = '21'
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.swing', 'javafx.web']
+}
+
+application {
+    // Launch through the non-Application wrapper so the JVM doesn't demand JavaFX on
+    // the module path. `./gradlew run` uses this; the JavaFX plugin supplies the modules.
+    mainClass = 'Chess.Launcher'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'Chess.Launcher'
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://jitpack.io/'
+    }
+}
+
+dependencies {
+    implementation 'com.google.code.gson:gson:2.11.0'
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
+}
+
+// Pin the test framework to JUnit 4 explicitly. Without this Gradle relies on
+// deprecated auto-detection, which runs the full suite but makes the --tests
+// filter find nothing (and is dropped in Gradle 9).
+test {
+    useJUnit()
+}

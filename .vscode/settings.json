@@ -1,0 +1,9 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "doki.background.path": "C:\\Users\\Work Account\\Downloads\\Wallpaper.jpg",
+    "doki.statusbar.name": "Raiden",
+    "doki.wallpaper.path": "C:\\Users\\Work Account\\Downloads\\Wallpaper.jpg",
+    "doki.background.enabled": true,
+    "doki.wallpaper.enabled": true,
+    "doki.background.anchor": "center"
+}
