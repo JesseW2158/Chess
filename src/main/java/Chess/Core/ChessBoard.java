@@ -40,8 +40,12 @@ public class ChessBoard extends GridPane {
     private final java.util.Deque<BoardSnapshot> history = new java.util.ArrayDeque<>();
     private final Chess.Core.Util.IO.json.ChessLoader snapshotIO = new Chess.Core.Util.IO.json.ChessLoader();
 
-    /** Everything needed to rewind one position: board JSON, repetition-key count, last-move squares. */
-    private record BoardSnapshot(byte[] state, int keyCount, int lastFrom, int lastTo) {}
+    /**
+     * Everything needed to rewind one position: board JSON, repetition-key count,
+     * last-move squares.
+     */
+    private record BoardSnapshot(byte[] state, int keyCount, int lastFrom, int lastTo) {
+    }
 
     public ChessBoard() {
         resetAttackedSquares();
@@ -103,7 +107,9 @@ public class ChessBoard extends GridPane {
         triggerAIMoveIfNeeded();
     }
 
-    /** Record the current position's Zobrist key for threefold-repetition tracking. */
+    /**
+     * Record the current position's Zobrist key for threefold-repetition tracking.
+     */
     private void pushPositionKey() {
         positionKeys.add(EngineBridge.fromBoard(this).key);
     }
@@ -111,7 +117,7 @@ public class ChessBoard extends GridPane {
     /** Record the move just played and repaint the affected squares (old + new). */
     public void setLastMove(int from, int to) {
         int oldFrom = lastMoveFrom, oldTo = lastMoveTo;
-        
+
         lastMoveFrom = from;
         lastMoveTo = to;
 
@@ -203,7 +209,10 @@ public class ChessBoard extends GridPane {
             javafx.application.Platform.runLater(() -> {
                 if (move != null) {
                     EngineBridge.applyMove(this, move);
-                    ChessGame.displayStatusText("AI move: " + move);
+                    
+                    if (!gameOver) {
+                        ChessGame.displayStatusText("AI move: " + move);
+                    }
                 }
                 aiThinking = false;
             });
@@ -220,6 +229,7 @@ public class ChessBoard extends GridPane {
         if (king != null) {
             if (king.isCheck()) {
                 if (king.isCheckMate()) {
+                    System.out.println("Check mate! " + king.getColor().revert().getFancyName() + " wins.");
                     ChessGame.displayStatusText("Check mate! " + king.getColor().revert().getFancyName() + " wins.");
                     gameOver = true;
                     return;
@@ -238,7 +248,8 @@ public class ChessBoard extends GridPane {
             long cur = positionKeys.get(positionKeys.size() - 1);
             int count = 0;
             for (long k : positionKeys) {
-                if (k == cur) count++;
+                if (k == cur)
+                    count++;
             }
             if (count >= 3) {
                 ChessGame.displayStatusText("Draw by threefold repetition.");
