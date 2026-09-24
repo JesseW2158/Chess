@@ -1,7 +1,7 @@
 # Chess
 
 A desktop chess game written in Java with a JavaFX interface. Play against a
-built-in AI engine that searches with negamax alpha-beta, iterative deepening,
+built-in AI engine that searches with negamax, alpha-beta, iterative deepening,
 and a transposition table. The board supports the full rules of chess, plus
 save/load, undo, and an editor mode for setting up custom positions.
 
